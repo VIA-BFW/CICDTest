@@ -1,0 +1,24 @@
+name: Build and Test
+
+on: [push, pull_request] # Trigger the workflow on push or pull request events
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository # Step to checkout the code from the repository
+      uses: actions/checkout@v2
+
+    - name: Build # Step to compile the C# program using csc
+      run: csc /out:HelloWorld.exe HelloWorld.cs
+
+    - name: Test # Step to run the compiled program and verify output
+      run: |
+        output=$(mono HelloWorld.exe)
+        if [ "$output" != "Hello, World!" ]; then
+          echo "Test failed: Output was not 'Hello, World!'"
+          exit 1
+        else
+          echo "Test passed: Output is 'Hello, World!'"
+        fi
