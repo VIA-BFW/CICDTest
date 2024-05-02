@@ -8,7 +8,7 @@ jobs:
     
     steps:
     - name: Checkout repository # Step to checkout the code from the repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Build # Step to compile the C# program using csc
       run: csc /out:HelloWorld.exe HelloWorld.cs
