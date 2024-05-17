@@ -2,7 +2,7 @@
 # CI / CD with GitHub Actions
 This Repo should show CI/CD Piplines with GitHub Actions.
 
-The action build-test-release.yml compiles, tests and releases an .exe file. It only releases the .exe file if a new named tag is published.
+The action [build-test-release.yml](https://github.com/VIA-BFW/CICDTest/blob/main/.github/workflows/build-test-release.yml) compiles, tests and releases an .exe file. It only releases the .exe file if a new named tag is published.
 
 ```
 git tag -a v1.0.8 -m "Release version 1.0.8"
