@@ -72,6 +72,6 @@ jobs:
       with:
         files: ./release/HelloWorld.exe  # Path to the file to be attached to the release
         tag_name: ${{ github.ref }}  # Use the tag name as the release version
-        release_name: Release ${{ github.ref }}  # Name of the release
+        name: Release ${{ github.ref }}  # Name of the release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub automatically provides this secret token for authentication
