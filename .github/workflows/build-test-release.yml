@@ -1,0 +1,75 @@
+name: Build, Test and Release
+
+# Define the events that will trigger this workflow
+on:
+  push:
+    branches:
+      - '*'  # Trigger on pushes to any branch
+    tags:
+      - 'v*.*.*'  # Trigger on pushes of tags that follow the version pattern (e.g., v1.0.0)
+  pull_request:
+    branches:
+      - main  # Trigger on pull requests to the main branch
+  workflow_dispatch: # Allows manual triggering of the workflow from the Actions tab
+
+# Define the jobs to be run
+jobs:
+  # Job to build and test the project
+  build-and-test:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+
+    steps:
+    - name: Checkout repository
+      # Use the actions/checkout action to check out the repository code
+      uses: actions/checkout@v4
+
+    - name: Build
+      # Compile the C# program using csc (C# compiler)
+      run: csc /out:HelloWorld.exe HelloWorld.cs
+
+    - name: Test
+      # Run the compiled program and verify its output
+      run: |
+        output=$(mono HelloWorld.exe)
+        if [ "$output" != "Hello, World!" ]; then
+          echo "Test failed: Output was not 'Hello, World!'"
+          exit 1  # Exit with a non-zero status if the test fails
+        else
+          echo "Test passed: Output is 'Hello, World!'"
+
+    - name: Upload artifact
+      # Upload the compiled .exe file as an artifact only if the event is a tag push and the tests pass
+      if: success() && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+      uses: actions/upload-artifact@v3
+      with:
+        name: HelloWorld-exe
+        path: HelloWorld.exe  # Path to the compiled .exe file
+
+  # Job to create a GitHub release
+  release:
+    # This job only runs on push events to tags and depends on the build-and-test job
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    needs: build-and-test  # Ensure this job runs only if the build-and-test job is successful
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+
+    steps:
+    - name: Checkout repository
+      # Use the actions/checkout action to check out the repository code
+      uses: actions/checkout@v4
+      
+    - name: Download artifact
+      # Download the artifact (compiled .exe file) that was uploaded by the build-and-test job
+      uses: actions/download-artifact@v3
+      with:
+        name: HelloWorld-exe  # Name of the artifact to download
+        path: ./release  # Path where the artifact will be downloaded
+
+    - name: Create GitHub Release
+      # Use the softprops/action-gh-release action to create a GitHub release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ./release/HelloWorld.exe  # Path to the file to be attached to the release
+        tag_name: ${{ github.ref }}  # Use the tag name as the release version
+        release_name: Release ${{ github.ref }}  # Name of the release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub automatically provides this secret token for authentication
