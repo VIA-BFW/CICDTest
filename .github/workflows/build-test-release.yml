@@ -36,6 +36,7 @@ jobs:
           exit 1  # Exit with a non-zero status if the test fails
         else
           echo "Test passed: Output is 'Hello, World!'"
+        fi
       shell: bash  # Explicitly define the shell to be used
 
     - name: Upload artifact
