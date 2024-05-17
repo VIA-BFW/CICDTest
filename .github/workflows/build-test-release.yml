@@ -36,6 +36,7 @@ jobs:
           exit 1  # Exit with a non-zero status if the test fails
         else
           echo "Test passed: Output is 'Hello, World!'"
+      shell: bash  # Explicitly define the shell to be used
 
     - name: Upload artifact
       # Upload the compiled .exe file as an artifact only if the event is a tag push and the tests pass
