@@ -52,6 +52,8 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     needs: build-and-test  # Ensure this job runs only if the build-and-test job is successful
     runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+    permissions:
+      contents: write
 
     steps:
     - name: Checkout repository
